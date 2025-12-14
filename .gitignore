@@ -1,0 +1,10 @@
+# 忽略 SQLite 数据库文件
+backend/todo.db
+
+# Python 缓存文件
+__pycache__/
+*.pyc
+
+# 系统文件
+.DS_Store
+Thumbs.db
