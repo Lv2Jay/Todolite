@@ -1,4 +1,3 @@
-/* 页面基础 */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
@@ -15,17 +14,15 @@ body {
   width: 400px;
 }
 
-/* 标题 */
 h1 {
   text-align: center;
   color: #333;
   margin-bottom: 20px;
 }
 
-/* 输入区 */
 .input-area {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 input {
@@ -55,9 +52,15 @@ button:hover {
   background-color: #357abd;
 }
 
-/* 任务列表 */
+.settings {
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #555;
+}
+
 ul {
   padding: 0;
+  margin: 0;
 }
 
 li {
@@ -69,11 +72,9 @@ li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background 0.2s;
-}
-
-li:hover {
-  background: #e6f0ff;
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease;
 }
 
 li.done span {
