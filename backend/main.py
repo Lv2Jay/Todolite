@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import sqlite3
 
 app = FastAPI()
 
-# 允许前端访问
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,41 +12,58 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 数据库
+# ---------- 数据库 ----------
 conn = sqlite3.connect("todo.db", check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS todo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
+    title TEXT NOT NULL,
     done INTEGER DEFAULT 0
 )
 """)
 conn.commit()
 
-# 获取所有任务
+# ---------- 数据模型 ----------
+class TodoCreate(BaseModel):
+    title: str
+
+class TodoUpdate(BaseModel):
+    done: int
+
+# ---------- API ----------
 @app.get("/todos")
 def get_todos():
     cursor.execute("SELECT id, title, done FROM todo")
-    return [{"id": row[0], "title": row[1], "done": row[2]} for row in cursor.fetchall()]
+    rows = cursor.fetchall()
+    return [
+        {"id": r[0], "title": r[1], "done": r[2]}
+        for r in rows
+    ]
 
-# 添加任务
 @app.post("/todos")
-def add_todo(title: str):
-    cursor.execute("INSERT INTO todo (title) VALUES (?)", (title,))
+def add_todo(todo: TodoCreate):
+    cursor.execute(
+        "INSERT INTO todo (title) VALUES (?)",
+        (todo.title,)
+    )
     conn.commit()
     return {"message": "ok"}
 
-# 删除任务
-@app.delete("/todos/{todo_id}")
-def delete_todo(todo_id: int):
-    cursor.execute("DELETE FROM todo WHERE id = ?", (todo_id,))
-    conn.commit()
-    return {"message": "deleted"}
-
-# 更新完成状态
 @app.put("/todos/{todo_id}")
-def update_todo(todo_id: int, done: int):
-    cursor.execute("UPDATE todo SET done = ? WHERE id = ?", (done, todo_id))
+def update_todo(todo_id: int, todo: TodoUpdate):
+    cursor.execute(
+        "UPDATE todo SET done = ? WHERE id = ?",
+        (todo.done, todo_id)
+    )
     conn.commit()
     return {"message": "updated"}
+
+@app.delete("/todos/{todo_id}")
+def delete_todo(todo_id: int):
+    cursor.execute(
+        "DELETE FROM todo WHERE id = ?",
+        (todo_id,)
+    )
+    conn.commit()
+    return {"message": "deleted"}

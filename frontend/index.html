@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>TodoLite</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
     <h1 class="title">TodoLite</h1>
+
+    <!-- 统计区 -->
+    <div class="stats" id="stats"></div>
 
     <!-- 输入区 -->
     <div class="input-row">
@@ -17,14 +20,19 @@
 
     <!-- 设置区 -->
     <div class="settings">
-      <label class="checkbox">
-        <input type="checkbox" id="confirmDelete" checked />
-        <span>删除任务时提示确认</span>
+      <label>
+        <input type="checkbox" id="confirmDelete">
+        删除任务时提示确认
       </label>
     </div>
 
-    <!-- 列表区 -->
+    <!-- 列表 -->
     <ul id="list" class="todo-list"></ul>
+
+    <!-- 空状态 -->
+    <div id="empty" class="empty">
+      🎉 暂无任务，开始添加吧
+    </div>
   </div>
 
   <script src="script.js"></script>
