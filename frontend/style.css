@@ -1,100 +1,143 @@
+/* ===== 全局 ===== */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  min-height: 100vh;
   background-color: #f0f2f5;
+
+  /* 整体居中 */
   display: flex;
   justify-content: center;
-  padding-top: 50px;
+  align-items: flex-start;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
 }
 
-.container {
-  background-color: #fff;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 400px;
-}
+/* ===== App 容器 ===== */
+.app {
+  margin-top: 60px;
+  width: 420px;
+  background: #ffffff;
+  padding: 28px 32px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 
-h1 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.input-area {
   display: flex;
-  margin-bottom: 10px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-input {
+/* ===== 标题 ===== */
+.title {
+  text-align: center;
+  margin: 0 0 8px;
+  color: #333;
+}
+
+/* ===== 输入行 ===== */
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.input-row input {
   flex: 1;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px 0 0 8px;
-  outline: none;
+  height: 42px;
+  padding: 0 14px;
   font-size: 14px;
+
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  outline: none;
 }
 
-input:focus {
+.input-row input:focus {
   border-color: #4a90e2;
 }
 
-button {
-  padding: 10px 20px;
+.input-row button {
+  width: 72px;
   border: none;
-  background-color: #4a90e2;
+  border-radius: 8px;
+  background: #4a90e2;
   color: #fff;
-  border-radius: 0 8px 8px 0;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.2s;
 }
 
-button:hover {
-  background-color: #357abd;
+.input-row button:hover {
+  background: #357abd;
 }
 
+/* ===== 设置区 ===== */
 .settings {
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
   color: #555;
 }
 
-ul {
-  padding: 0;
+/* ===== 列表 ===== */
+.todo-list {
   margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-li {
+/* ===== 单条 Todo ===== */
+.todo-list li {
   list-style: none;
   background: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 10px 15px;
-  border-radius: 8px;
+  border-radius: 10px;
+  padding: 10px 12px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  opacity: 1;
-  transform: translateY(0);
+
   transition: all 0.3s ease;
 }
 
-li.done span {
-  text-decoration: line-through;
-  color: #999;
-}
-
-li span {
+/* 左侧内容 */
+.todo-list li .left {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-li button {
-  background-color: #ff4d4f;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+/* 已完成 */
+.todo-list li.done {
+  color: #999;
 }
 
-li button:hover {
-  background-color: #d9363e;
+.todo-list li.done .text {
+  text-decoration: line-through;
+}
+
+/* 删除按钮 */
+.todo-list li button {
+  border: none;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.todo-list li button:hover {
+  background: #d9363e;
 }

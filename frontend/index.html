@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>TodoLite</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>TodoLite</h1>
+  <div class="app">
+    <h1 class="title">TodoLite</h1>
 
-    <div class="input-area">
+    <!-- 输入区 -->
+    <div class="input-row">
       <input id="input" placeholder="输入新任务..." />
-      <button onclick="addTodo()">添加</button>
+      <button id="addBtn">添加</button>
     </div>
 
-    <!-- 设置：删除是否提示 -->
+    <!-- 设置区 -->
     <div class="settings">
-      <label>
+      <label class="checkbox">
         <input type="checkbox" id="confirmDelete" checked />
-        删除任务时提示确认
+        <span>删除任务时提示确认</span>
       </label>
     </div>
 
-    <ul id="list"></ul>
+    <!-- 列表区 -->
+    <ul id="list" class="todo-list"></ul>
   </div>
 
   <script src="script.js"></script>

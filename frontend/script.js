@@ -1,99 +1,113 @@
 const API = "http://127.0.0.1:8000";
-const list = document.getElementById("list");
-const confirmCheckbox = document.getElementById("confirmDelete");
 
-// 渲染任务
+const list = document.getElementById("list");
+const input = document.getElementById("input");
+const addBtn = document.getElementById("addBtn");
+const confirmDelete = document.getElementById("confirmDelete");
+
+/* ===== 初始化 ===== */
+loadTodos();
+
+/* ===== 事件 ===== */
+addBtn.onclick = addTodo;
+input.addEventListener("keyup", e => e.key === "Enter" && addTodo());
+
+/* ===== 加载任务（局部更新，不闪） ===== */
 function loadTodos() {
   fetch(API + "/todos")
     .then(res => res.json())
-    .then(data => {
-      const existingIds = Array.from(list.children).map(li => Number(li.dataset.id));
-      const newIds = data.map(item => item.id);
+    .then(todos => {
+      const existing = [...list.children].map(li => +li.dataset.id);
+      const incoming = todos.map(t => t.id);
 
-      // 删除已经不存在的任务元素
-      existingIds.forEach(id => {
-        if (!newIds.includes(id)) {
-          const li = list.querySelector(`li[data-id='${id}']`);
-          if (li) li.remove();
+      // 删除不存在的
+      existing.forEach(id => {
+        if (!incoming.includes(id)) {
+          list.querySelector(`[data-id='${id}']`)?.remove();
         }
       });
 
-      // 添加或更新任务
-      data.forEach(item => {
-        let li = list.querySelector(`li[data-id='${item.id}']`);
+      // 新增或更新
+      todos.forEach(todo => {
+        let li = list.querySelector(`[data-id='${todo.id}']`);
         if (!li) {
-          // 新增任务元素
-          li = document.createElement("li");
-          li.dataset.id = item.id;
-          li.style.opacity = 0;
-          li.style.transform = "translateY(-10px)";
+          li = createTodoItem(todo);
           list.appendChild(li);
 
-          // 滑入动画
-          setTimeout(() => {
-            li.style.transition = "all 0.3s ease";
+          // 入场动画
+          li.style.opacity = 0;
+          li.style.transform = "translateY(-10px)";
+          requestAnimationFrame(() => {
             li.style.opacity = 1;
             li.style.transform = "translateY(0)";
-          }, 50);
+          });
+        } else {
+          updateTodoItem(li, todo);
         }
-
-        li.className = item.done ? "done" : "";
-        li.innerHTML = `
-          <span>
-            <input type="checkbox" ${item.done ? "checked" : ""} onclick="toggleDone(${item.id}, this.checked)">
-            ${item.title}
-          </span>
-          <button onclick="deleteTodo(${item.id}, event)">删除</button>
-        `;
       });
     });
 }
 
-// 添加任务
-function addTodo() {
-  const input = document.getElementById("input");
-  const title = input.value.trim();
-  if (!title) {
-    alert("任务不能为空！");
-    return;
-  }
+/* ===== 创建 Todo ===== */
+function createTodoItem(todo) {
+  const li = document.createElement("li");
+  li.dataset.id = todo.id;
 
-  fetch(API + "/todos?title=" + encodeURIComponent(title), { method: "POST" })
-    .then(() => {
-      input.value = "";
-      loadTodos();
-    });
+  li.innerHTML = `
+    <div class="left">
+      <input type="checkbox" />
+      <span class="text"></span>
+    </div>
+    <button>删除</button>
+  `;
+
+  li.querySelector("input").onchange = e =>
+    toggleDone(todo.id, e.target.checked);
+
+  li.querySelector("button").onclick = e =>
+    deleteTodo(todo.id, e);
+
+  updateTodoItem(li, todo);
+  return li;
 }
 
-// 删除任务
+/* ===== 更新 Todo ===== */
+function updateTodoItem(li, todo) {
+  li.className = todo.done ? "done" : "";
+  li.querySelector(".text").textContent = todo.title;
+  li.querySelector("input").checked = !!todo.done;
+}
+
+/* ===== 添加 ===== */
+function addTodo() {
+  const title = input.value.trim();
+  if (!title) return alert("任务不能为空");
+
+  fetch(API + "/todos?title=" + encodeURIComponent(title), {
+    method: "POST"
+  }).then(() => {
+    input.value = "";
+    loadTodos();
+  });
+}
+
+/* ===== 删除 ===== */
 function deleteTodo(id, event) {
-  const needConfirm = confirmCheckbox.checked;
-  if (needConfirm && !confirm("确定删除吗？")) return;
+  if (confirmDelete.checked && !confirm("确定删除该任务吗？")) return;
 
   const li = event.target.closest("li");
-
-  // 删除动画
   li.style.opacity = 0;
-  li.style.transform = "translateX(100%)";
+  li.style.transform = "translateX(80px)";
+
   setTimeout(() => {
     fetch(API + "/todos/" + id, { method: "DELETE" })
       .then(() => li.remove());
   }, 300);
 }
 
-// 切换完成状态
+/* ===== 切换完成 ===== */
 function toggleDone(id, done) {
-  fetch(API + "/todos/" + id + "?done=" + (done ? 1 : 0), { method: "PUT" })
-    .then(() => {
-      const li = list.querySelector(`li[data-id='${id}']`);
-      if (li) li.className = done ? "done" : "";
-    });
+  fetch(API + `/todos/${id}?done=${done ? 1 : 0}`, {
+    method: "PUT"
+  }).then(loadTodos);
 }
-
-// 回车添加
-document.getElementById("input").addEventListener("keyup", function(e) {
-  if (e.key === "Enter") addTodo();
-});
-
-// 初始加载
-loadTodos();
